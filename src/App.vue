@@ -76,8 +76,17 @@
         <div class="card">
           <div class="card-body">
             <ul class="list-group">
-              <li class="list-group-item" v-for="domain in domains" v-bind:key="domain">
-                {{ domain }}
+              <li class="list-group-item" v-for="domain in domains" v-bind:key="domain.name">
+                <div class="row">
+                  <div class="col-md">
+                    {{ domain.name }}
+                  </div>
+                  <div class="col-md text-right">
+                    <a class="btn btn-info" v-bind:href="domain.checkout" target="_brank">
+                      <i class="fa fa-shopping-cart"></i>
+                    </a>
+                  </div>
+                </div>
               </li>
             </ul>
           </div>
@@ -91,6 +100,8 @@
 import "bootstrap/dist/css/bootstrap.css";
 import "font-awesome/css/font-awesome.css";
 
+// https://checkout.hostgator.com.br/?a=add&sld=flightstation&tld=.com.br
+
 export default {
   name: "app",
   data() {
@@ -99,38 +110,47 @@ export default {
       sufix: "",
       prefixes: ["Air", "Jet", "Flight"],
       sufixes: ["Hub", "Station", "Mart"],
-      domains: []
     };
   },
-  mounted() {
-    this.generate();
-  },
+
+  // https://vuejs.org/v2/guide/instance.html#Lifecycle-Diagram
+  // created() {
+  //   this.domains = this.generate();
+  // },
+
   methods: {
     addPrefix(prefix) {
       this.prefixes.push(prefix);
       this.prefix = "";
-      this.generate();
     },
     deletePrefix(prefix) {
       this.prefixes.splice(this.prefixes.indexOf(prefix), 1);
-      this.generate();
     },
     addSufix(sufix) {
       this.sufixes.push(sufix);
       this.sufix = "";
-      this.generate();
     },
     deleteSufix(sufix) {
       this.sufixes.splice(this.sufixes.indexOf(sufix), 1);
-      this.generate();
     },
-    generate() {
-      this.domains = [];
+  },
+
+  // https://vuejs.org/v2/guide/computed.html
+  computed: {
+    domains() {
+      const domains = [];
       for (const prefix of this.prefixes) {
         for (const sufix of this.sufixes) {
-          this.domains.push(prefix + sufix);
+          const name = prefix + sufix;
+          const url = name.toLowerCase();
+          const checkout = `https://checkout.hostgator.com.br/?a=add&sld=${url}&tld=.com.br`;
+          domains.push({
+            name,
+            checkout
+          });
         }
       }
+      return domains;
     }
   }
 };
