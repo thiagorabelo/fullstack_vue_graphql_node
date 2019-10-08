@@ -1,6 +1,6 @@
 # Fullstack Vue Graphql Node 1
 
-Implementação do projeto baseado em Vue.js, GraphQl e Node, apresentado no canal Rodrigo Branas
+Implementation of the project based on Vue.js, GraphQl and Node, presented on Rodrigo Branas channel
 (Brazilian Portuguese). See <https://www.youtube.com/watch?v=TSX_hMfL13U&list=PLQCmSnNFVYnTiC-pPY0SySbf-ZNGBwnaG>.
 
 ## Project setup
