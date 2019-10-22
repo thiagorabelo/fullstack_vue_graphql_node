@@ -45,8 +45,7 @@
 </template>
 
 <script>
-import "bootstrap/dist/css/bootstrap.css";
-import "font-awesome/css/font-awesome.css";
+import axios from "axios/dist/axios";
 import AppItemList from "./AppItemList";
 
 // https://checkout.hostgator.com.br/?a=add&sld=flightstation&tld=.com.br
@@ -58,15 +57,37 @@ export default {
   },
   data() {
     return {
-      prefixes: ["Air", "Jet", "Flight"],
-      sufixes: ["Hub", "Station", "Mart"],
+      prefixes: [],
+      sufixes: [],
     };
   },
 
   // https://vuejs.org/v2/guide/instance.html#Lifecycle-Diagram
-  // created() {
-  //   this.domains = this.generate();
-  // },
+  created() {
+    axios({
+      url: "http://localhost:4000",
+      method: "post",
+      data: {
+        query: `
+          {
+            prefixes: items (type: "prefix") {
+              id
+              type
+              description
+            }
+
+            sufixes: items (type: "sufix") {
+              description
+            }
+          }
+        `
+      }
+    }).then(response => {
+      const query = response.data;
+      this.prefixes = query.data.prefixes.map(prefix => prefix.description);
+      this.sufixes = query.data.sufixes.map(sufix => sufix.description);
+    });
+  },
 
   methods: {
     addPrefix(prefix) {
