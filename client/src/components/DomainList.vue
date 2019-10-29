@@ -111,8 +111,14 @@ export default {
             id: item.id
           }
         }
-      }).then(() => {
-        this.getItems(item.type);
+      }).then(response => {
+        const query = response.data;
+        if (query.data.deleted) {
+          const index = this.items[item.type].findIndex(it => it.id === item.id);
+          if (index >= 0) {
+            this.items[item.type].splice(index, 1);
+          }
+        }
       });
     },
     getItems(type) {
