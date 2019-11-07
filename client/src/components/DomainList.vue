@@ -28,10 +28,17 @@
             <ul class="list-group">
               <li class="list-group-item" v-for="domain in domains" v-bind:key="domain.name">
                 <div class="row">
-                  <div class="col-md">
+                  <div class="col-md-6">
                     {{ domain.name }}
                   </div>
-                  <div class="col-md text-right">
+                  <div class="col-md-3">
+                    <span class="badge"
+                          v-bind:class="{ 'badge-info': domain.avaliable,
+                                          'badge-warning': !domain.avaliable }">
+                      {{ domain.avaliable ? "Disponível" : "Não Disponível" }}
+                    </span>
+                  </div>
+                  <div class="col-md-3 text-right">
                     <a class="btn btn-info" v-bind:href="domain.checkout" target="_brank">
                       <i class="fa fa-shopping-cart"></i>
                     </a>
@@ -62,14 +69,19 @@ export default {
       items: {
         prefix: [],
         suffix: [],
-      }
+      },
+      domains: [],
     };
   },
 
   // https://vuejs.org/v2/guide/instance.html#Lifecycle-Diagram
   created() {
-    this.getItems("prefix");
-    this.getItems("suffix");
+    Promise.all([
+      this.getItems("prefix"),
+      this.getItems("suffix")
+    ]).then(() => {
+      this.generateDomains();
+    });
   },
 
   methods: {
@@ -95,6 +107,7 @@ export default {
         const query = response.data;
         const newItem = query.data.newItem;
         this.items[item.type].push(newItem);
+        this.generateDomains();
       });
     },
     deleteItem(item) {
@@ -117,18 +130,19 @@ export default {
           const index = this.items[item.type].findIndex(it => it.id === item.id);
           if (index >= 0) {
             this.items[item.type].splice(index, 1);
+            this.generateDomains();
           }
         }
       });
     },
     getItems(type) {
-      axios({
+      return axios({
         url: "http://localhost:4000",
         method: "post",
         data: {
           query: `
             query ($type: String) {
-              prefixes: items (type: $type) {
+              items: items (type: $type) {
                 id
                 type
                 description
@@ -141,29 +155,30 @@ export default {
         }
       }).then(response => {
         const query = response.data;
-        this.items[type] = query.data.prefixes;
+        this.items[type] = query.data.items;
       });
     },
-  },
-
-  // https://vuejs.org/v2/guide/computed.html
-  computed: {
-    domains() {
-      const domains = [];
-      for (const prefix of this.items.prefix) {
-        for (const suffix of this.items.suffix) {
-          const name = prefix.description + suffix.description;
-          const url = name.toLowerCase();
-          const checkout = `https://checkout.hostgator.com.br/?a=add&sld=${url}&tld=.com.br`;
-          domains.push({
-            name,
-            checkout
-          });
+    generateDomains() {
+      axios({
+        url: "http://localhost:4000",
+        method: "post",
+        data: {
+          query: `
+            mutation {
+              domains: generateDomains {
+                name
+                checkout
+                avaliable
+              }
+            }
+          `
         }
-      }
-      return domains;
+      }).then((response) => {
+        const query = response.data;
+        this.domains = query.data.domains;
+      });
     }
-  }
+  },
 };
 </script>
 

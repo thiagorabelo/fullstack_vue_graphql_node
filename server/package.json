@@ -11,5 +11,33 @@
   "dependencies": {
     "apollo-server": "^2.9.7",
     "graphql": "^14.5.8"
+  },
+  "eslintConfig": {
+    "root": true,
+    "parserOptions": {
+      "ecmaVersion": 2017
+    },
+    "env": {
+      "node": true,
+      "es6": true
+    },
+    "extends": [
+      "eslint:recommended"
+    ],
+    "rules": {
+      "no-console": "off",
+      "quotes": [
+        "error",
+        "double"
+      ],
+      "indent": [
+        "error",
+        4
+      ],
+      "semi": [
+        "error",
+        "always"
+      ]
+    }
   }
 }
