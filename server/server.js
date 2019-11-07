@@ -21,7 +21,7 @@ const isDomainAvaliable = function(url) {
             }
         });
     });
-}
+};
 
 const typeDefs = `
 
