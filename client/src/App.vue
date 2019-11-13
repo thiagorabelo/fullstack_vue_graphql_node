@@ -5,7 +5,7 @@
       <h6 class="text-secondary">Gerador de nomes utilizando Vue.js, GraphQl e Node</h6>
     </div>
     <div id="main">
-      <DomainList></DomainList>
+      <router-view></router-view>
     </div>
   </div>
 </template>
@@ -13,14 +13,12 @@
 <script>
 import "bootstrap/dist/css/bootstrap.css";
 import "font-awesome/css/font-awesome.css";
-import DomainList from "./components/DomainList";
 
 // https://checkout.hostgator.com.br/?a=add&sld=flightstation&tld=.com.br
 
 export default {
   name: "app",
   components: {
-    DomainList
   }
 };
 </script>
@@ -28,6 +26,10 @@ export default {
 <style>
 .brl {
   margin-bottom: 17px;
+}
+
+.top-spc {
+  margin-top: 17px;
 }
 
 #slogan {

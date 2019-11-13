@@ -25,7 +25,7 @@
         <h5>Domínios <i class="badge badge-info">{{ domains.length }}</i></h5>
         <div class="card">
           <div class="card-body">
-            <ul class="list-group">
+            <ul class="list-group" v-if="isLoadedDomains">
               <li class="list-group-item" v-for="domain in domains" v-bind:key="domain.name">
                 <div class="row">
                   <div class="col-md-6">
@@ -42,10 +42,17 @@
                     <a class="btn btn-info" v-bind:href="domain.checkout" target="_brank">
                       <i class="fa fa-shopping-cart"></i>
                     </a>
+                    &nbsp;
+                    <button class="btn btn-info" v-on:click="openDomain(domain)">
+                      <i class="fa fa-search"></i>
+                    </button>
                   </div>
                 </div>
               </li>
             </ul>
+            <div class="text-center" v-else>
+              <img src="/loading.gif" alt="">
+            </div>
           </div>
         </div>
       </div>
@@ -71,6 +78,7 @@ export default {
         suffix: [],
       },
       domains: [],
+      isLoadedDomains: false
     };
   },
 
@@ -176,6 +184,12 @@ export default {
       }).then((response) => {
         const query = response.data;
         this.domains = query.data.domains;
+        this.isLoadedDomains = true;
+      });
+    },
+    openDomain(domain) {
+      this.$router.push({
+        path: `/domain/${domain.name}`
       });
     }
   },
